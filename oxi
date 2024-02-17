@@ -6898,7 +6898,27 @@ spawn(countSecond)
 game:GetService("RunService").RenderStepped:Wait()
 
 
+--Robeats
+if game.PlaceId == 698448212 then
+	local page = venyx:addPage("Robeats", 9667400753)
 
+	local NormalPage = page:addSection("AutoPlay")
+
+	NormalPage:addToggle("Auto play", nil, function(value)
+		RobeatsAutoplayToggle = value
+	end)
+
+	NormalPage:addSlider("Random", 0, 0, 80, function(value)
+		Autoplayer.distanceLowerBound = 0.4 - value / 10
+		Autoplayer.distanceUpperBound = 0.6 + value / 10
+	end)
+
+	NormalPage:addSlider("Spam level", 20, 1, 20, function(value)
+		Autoplayer.delayLowerBound = 0.05 * 20 / value
+		Autoplayer.delayUpperBound = 0.1 * 20 / value
+		Autoplayer.sliderDebounce = 0.08 * 20 / value
+	end)
+end
 
 
 
@@ -6970,6 +6990,153 @@ end
 game:GetService("RunService").RenderStepped:Wait()
 
 
+--Transfur outbreak
+if game.PlaceId == 5987922834 then
+	local page = venyx:addPage("Transfur outbreak", 11439883366)
+
+	local UtilityPage = page:addSection("Utility")
+	local LatexPage = page:addSection("Latex")
+
+	UtilityPage:addButton("Reset", function()
+		if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+			game.Players.LocalPlayer.Character.Humanoid.Health = 0
+		end
+	end)
+	
+	spawn(function()
+		repeat wait() until player.PlayerGui:FindFirstChild("Menu")
+		OldHuman = "rbxassetid://5979500480"
+		OldInfected = "rbxassetid://5990705685"
+
+		NewHuman = player.PlayerGui:WaitForChild("Menu"):WaitForChild("Human").SoundId
+		NewInfected = player.PlayerGui:WaitForChild("Menu"):WaitForChild("Infected").SoundId
+	end)
+	
+	
+	UtilityPage:addToggle("Old music", nil, function(value)
+		if value then
+			player.PlayerGui.Menu.Human.SoundId = OldHuman
+			player.PlayerGui.Menu.Infected.SoundId = OldInfected
+		else
+			player.PlayerGui.Menu.Human.SoundId = NewHuman
+			player.PlayerGui.Menu.Infected.SoundId = NewInfected
+		end
+	end)
+
+	UtilityPage:addButton("Get all words", function()
+		local word = workspace.Collectibles.Des
+		repeat
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(word:GetChildren()[1].Position)
+			wait()
+			for i, v in pairs(word:GetDescendants()) do
+				if v:IsA("ProximityPrompt") then
+					fireproximityprompt(v)
+				end
+			end
+			task.wait()
+		until game.Players.LocalPlayer.Mind[word.Name].Value
+
+		word = workspace.Collectibles.Dea
+		repeat
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(word:GetChildren()[1].Position)
+			wait()
+			for i, v in pairs(word:GetDescendants()) do
+				if v:IsA("ProximityPrompt") then
+					fireproximityprompt(v)
+				end
+			end
+			task.wait()
+		until game.Players.LocalPlayer.Mind[word.Name].Value
+
+
+		word = workspace.Collectibles.Dem
+		repeat
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(word:GetChildren()[1].Position)
+			wait()
+			for i, v in pairs(word:GetDescendants()) do
+				if v:IsA("ProximityPrompt") then
+					fireproximityprompt(v)
+				end
+			end
+			task.wait()
+		until game.Players.LocalPlayer.Mind[word.Name].Value
+	end)
+	
+	local ShowHp = false
+	UtilityPage:addToggle("Show HP", nil, function(value)
+		ShowHp = value
+		if ShowHp then
+			while ShowHp do
+				game:GetService("RunService").RenderStepped:Wait()
+				if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+					game:GetService("Players").LocalPlayer.PlayerGui.Stats.HumanoidFrame.HealthFrame.Frame.HealthNum.Text = math.floor(game.Players.LocalPlayer.Character.Humanoid.Health) .."/" ..game.Players.LocalPlayer.Character.Humanoid.MaxHealth .."HP"
+				end
+			end
+		else
+			game:GetService("Players").LocalPlayer.PlayerGui.Stats.HumanoidFrame.HealthFrame.Frame.HealthNum.Text = math.floor(game.Players.LocalPlayer.Character.Humanoid.Health / game.Players.LocalPlayer.Character.Humanoid.MaxHealth * 100) .."%"
+		end
+	end)
+	
+	local ShowBloodTank = false
+	UtilityPage:addToggle("Show blood tank full", nil, function(value)
+		ShowBloodTank = value
+		
+		if value then
+			local BloodTank = Instance.new("ScreenGui", game.CoreGui)
+			BloodTank.Name = "BloodTank"
+			BloodTank.ResetOnSpawn = false
+
+			local BloodTankLabel = Instance.new("TextLabel", BloodTank)
+			BloodTankLabel.Name = "Num"
+			BloodTankLabel.BackgroundTransparency = 1
+			BloodTankLabel.TextScaled = true
+			BloodTankLabel.Size = UDim2.new(0.3, 0, 0.1, 0)
+			BloodTankLabel.Position = UDim2.new(0.7, 0,0.2, 0)
+			BloodTankLabel.TextColor3 = Color3.new(255, 255, 255)
+			BloodTankLabel.TextStrokeTransparency = 0
+
+			while ShowBloodTank do
+				wait(.5)
+				local bloodBanks = {}
+
+				for i, v in pairs(workspace.Collectibles:GetChildren()) do
+					if v.Name == "BloodBank" then
+						if v.Box.LockPart.Attachment.ProximityPrompt.Enabled then
+							table.insert(bloodBanks, v)
+						end
+					end
+				end
+				
+				BloodTankLabel.Text = "Full blood tank : " ..#bloodBanks
+			end
+		else
+			game.CoreGui.BloodTank:Destroy()
+		end
+	end)
+	
+	
+
+	local transfurList = {}
+	for i, v in pairs(workspace.Cones:GetChildren()) do
+		if v:IsA("BasePart") and not table.find(transfurList, v.Name) then
+			table.insert(transfurList, v.Name)
+		end
+	end
+
+	local transfur = nil
+
+	LatexPage:addDropdown("Choose transfur", transfurList, function(value)
+		transfur = value
+	end)
+
+	LatexPage:addButton("Infect", function()
+		if workspace.Cones:FindFirstChild(transfur) then
+			player.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Cones[transfur].Position)
+		else
+			venyx.notify("Error", "Incorrect transfur")
+		end
+	end)
+end
 
 
 
@@ -6977,6 +7144,458 @@ game:GetService("RunService").RenderStepped:Wait()
 
 
 
+game:GetService("RunService").RenderStepped:Wait()
+
+--Starving artist
+if game.PlaceId == 8916037983 then
+	local page = venyx:addPage("Starving artist", 9460743904)
+
+	local NormalPage = page:addSection("Copy art")
+
+
+
+	NormalPage:addTextbox("Player to copy", "player name", function(value, focusLost)
+		if focusLost then
+			if game.Players:FindFirstChild(value) then
+				ArtistToCopyName = value
+			else
+				venyx:Notify("Error", "Player not found")
+			end
+		end
+	end)
+
+	NormalPage:addTextbox("Art number", "Enter number", function(value, focusLost)
+		if focusLost then
+			ArtistPlotNum = value
+		end
+	end)
+
+	NormalPage:addSlider("Paint speed", 5, 1, 20, function(value)
+		PaintSpeed = (20 - value) / 35
+	end)
+
+	NormalPage:addButton("Preview paint", function()
+		local imageBytes = {}
+		local IDPAINT = PaintID
+
+
+		for i=1,1024 do
+			table.insert(imageBytes, i, workspace.Plots[ArtistToCopyName].Easels[ArtistPlotNum].Canvas.SurfaceGui.Grid[i].BackgroundColor3)
+		end
+
+
+		local UI = game.Players.LocalPlayer.PlayerGui.MainGui.PaintFrame.GridHolder.Grid
+		for i,v in pairs(imageBytes) do
+			UI[i].BackgroundColor3  = v
+			if PaintID ~= IDPAINT then
+				break
+			end
+		end
+
+
+		local function color_pixel(index,color)
+			local connection = (getconnections(UI[tostring(index)].MouseButton1Click))[1]
+			setupvalue(connection.Function,9,color)
+			connection.Function()
+		end
+		local low_quality = 25
+
+		lq=low_quality
+		for i=1,1024 do
+			v=imageBytes[i]
+			if not v  or not v.R or not v.G or not v.B then continue end
+			if v.R == 0 and v.G == 0 and v.B == 0 then v = {R=255,G=255,B=255} end
+			local r,g,b = v.R or 0,v.G or 0,v.B or 0
+			print(i, r-(r%lq),g-(g%lq),b-(b%lq))
+			color_pixel(i,Color3.fromRGB(r-(r%lq),g-(g%lq),b-(b%lq)))
+		end
+
+		wait(0.5)
+
+		local imageBytes = {}
+		local IDPAINT = PaintID
+
+
+		for i=1,1024 do
+			table.insert(imageBytes, i, Color3.new(1, 1, 1))
+		end
+
+
+		local UI = game.Players.LocalPlayer.PlayerGui.MainGui.PaintFrame.GridHolder.Grid
+		for i,v in pairs(imageBytes) do
+			UI[i].BackgroundColor3  = v
+			if PaintID ~= IDPAINT then
+				break
+			end
+		end
+
+
+		local function color_pixel(index,color)
+			local connection = (getconnections(UI[tostring(index)].MouseButton1Click))[1]
+			setupvalue(connection.Function,9,color)
+			connection.Function()
+		end
+		local low_quality = 25
+
+		lq=low_quality
+		for i=1,1024 do
+			v=imageBytes[i]
+			if not v  or not v.R or not v.G or not v.B then continue end
+			if v.R == 0 and v.G == 0 and v.B == 0 then v = {R=255,G=255,B=255} end
+			local r,g,b = v.R or 0,v.G or 0,v.B or 0
+			color_pixel(i,Color3.fromRGB(r-(r%lq),g-(g%lq),b-(b%lq)))
+		end
+	end)
+
+	NormalPage:addButton("Start paint", function()
+		PaintID += 1
+
+		 imageBytes = {}
+		 IDPAINT = PaintID
+
+
+		for i=1,1024 do
+			table.insert(imageBytes, i, workspace.Plots[ArtistToCopyName].Easels[ArtistPlotNum].Canvas.SurfaceGui.Grid[i].BackgroundColor3)
+		end
+
+
+		local UI = game.Players.LocalPlayer.PlayerGui.MainGui.PaintFrame.GridHolder.Grid
+		for i,v in pairs(imageBytes) do
+			UI[i].BackgroundColor3  = v
+			wait(PaintSpeed)
+			if PaintID ~= IDPAINT then
+				break
+			end
+		end
+
+
+		local function color_pixel(index,color)
+			local connection = (getconnections(UI[tostring(index)].MouseButton1Click))[1]
+			setupvalue(connection.Function,9,color)
+			connection.Function()
+		end
+		local low_quality = 25
+
+		lq=low_quality
+		for i=1,1024 do
+			v=imageBytes[i]
+			if not v  or not v.R or not v.G or not v.B then continue end
+			if v.R == 0 and v.G == 0 and v.B == 0 then v = {R=255,G=255,B=255} end
+			local r,g,b = v.R or 0,v.G or 0,v.B or 0
+			color_pixel(i,Color3.fromRGB(r-(r%lq),g-(g%lq),b-(b%lq)))
+		end
+	end)
+
+	NormalPage:addButton("Stop paint", function()
+		PaintID += 1
+	end)
+
+	NormalPage:addButton("Show art number", function()
+		for i, v in pairs(workspace.Plots:GetChildren()) do
+			for i, b in pairs(v.Easels:GetChildren()) do
+				local ArtInfo = b.ArtInfo:Clone()
+				ArtInfo.Parent = b.Canvas
+				ArtInfo.AlwaysOnTop = true
+				ArtInfo.StudsOffset = Vector3.new(0, 0, 0)
+				ArtInfo.MaxDistance = 50
+
+				for i, c in pairs(ArtInfo.Frame.Info:GetChildren()) do
+					if c.Name ~= "ArtName" and c.Name ~= "UIListLayout" then
+						c:Destroy()
+					end
+				end
+
+				ArtInfo.Frame.Info.ArtName.Text = "Art number : " ..b.Name
+
+				game:GetService("Debris"):AddItem(ArtInfo, 3)
+			end
+		end
+	end)
+
+
+	NormalPage:addButton("Copy script to clipboard", function()
+
+		local imageBytes = {}
+
+
+		for i=1,1024 do
+			table.insert(imageBytes, i, workspace.Plots[ArtistToCopyName].Easels[ArtistPlotNum].Canvas.SurfaceGui.Grid[i].BackgroundColor3)
+		end
+
+		local afterScript = [[
+		local UI = game.Players.LocalPlayer.PlayerGui.MainGui.PaintFrame.GridHolder.Grid
+		for i,v in pairs(imageBytes) do
+			UI[i].BackgroundColor3  = v
+			wait(0.3)
+		end
+
+
+		local function color_pixel(index,color)
+			local connection = (getconnections(UI[tostring(index)].MouseButton1Click))[1]
+			setupvalue(connection.Function,9,color)
+			connection.Function()
+		end
+		local low_quality = 25
+
+		lq=low_quality
+		for i=1,1024 do
+			v=imageBytes[i]
+			if not v  or not v.R or not v.G or not v.B then continue end
+			if v.R == 0 and v.G == 0 and v.B == 0 then v = {R=255,G=255,B=255} end
+			local r,g,b = v.R or 0,v.G or 0,v.B or 0
+			color_pixel(i,Color3.fromRGB(r-(r%lq),g-(g%lq),b-(b%lq)))
+			end
+			]] 
+
+
+		local newbyte = ""
+
+		for i, v in pairs(imageBytes) do		
+			newbyte = newbyte.. "Color3.new(" ..tostring(v) ..") ,"
+		end
+
+
+		local byte = "local imageBytes = {" ..newbyte .."}"
+
+		setclipboard(byte .."\n" ..afterScript)
+	end)
+end
+
+
+
+game:GetService("RunService").RenderStepped:Wait()
+
+
+--LagTester
+if game.PlaceId == 6356806222 then
+	local page = venyx:addPage("Lag tester", 8998677319)
+
+	local NormalPage = page:addSection("Basic")
+
+	NormalPage:addToggle("Auto Delete Part", nil, function(value)
+		if value then
+			for i, v in pairs(workspace.Parts:GetChildren()) do
+				v:Destroy()
+			end
+		end
+		autoDeletePart = value
+	end)
+
+	if workspace:FindFirstChild("Parts") then
+		workspace.Parts.ChildAdded:Connect(function(child)
+			if autoDeletePart and alive then
+				game:GetService("RunService").RenderStepped:Wait()
+				child:Destroy()
+			end
+		end)
+	end
+end
+
+game:GetService("RunService").RenderStepped:Wait()
+
+
+
+--Farming and friends
+if game.PlaceId == 2772610559 then
+	local page = venyx:addPage("Farming and friends", 9027120450)
+
+	local NormalPage = page:addSection("Basic")
+
+
+	NormalPage:addToggle("Show prices", nil, function(value)
+		showFarmOffer = value
+		local hostFrame = nil
+
+		if value then
+			hostFrame = Instance.new("Frame")
+			hostFrame.Parent = game.CoreGui:FindFirstChild(name)
+			hostFrame.Name = "Price"
+			hostFrame.BackgroundTransparency = 1
+			hostFrame.Size = UDim2.new(0.15, 0, 0.7, 0)
+			hostFrame.Position = UDim2.new(0.82, 0, 0.03, 0)
+
+			PriceFrame = workspace.SellValues.SellValues.SurfaceGui.Frame:Clone()
+			PriceFrame.Parent = hostFrame
+			PriceFrame.Size = UDim2.new(1, 0, 1, 0)
+
+			while true do
+				wait(1)
+
+				if not PriceFrame then
+					break
+				end
+
+				PriceFrame:Destroy()
+				PriceFrame = workspace.SellValues.SellValues.SurfaceGui.Frame:Clone()
+				PriceFrame.Parent = hostFrame
+				PriceFrame.Size = UDim2.new(1, 0, 1, 0)
+
+			end
+		else
+			hostFrame:Destroy()
+		end
+	end)
+
+	if workspace:FindFirstChild("Parts") then
+		workspace.Parts.ChildAdded:Connect(function(child)
+			if autoDeletePart and alive then
+				game:GetService("RunService").RenderStepped:Wait()
+				child:Destroy()
+			end
+		end)
+	end
+
+	NormalPage:addButton("Sell egg", function()
+		local root = game.Players.LocalPlayer.Character.HumanoidRootPart
+		local basePos = root.CFrame
+
+		root.CFrame = CFrame.new(-388, 14, 1427)
+		wait(0.2)
+		root.CFrame = basePos
+	end)
+
+	NormalPage:addButton("Refresh seed", function()
+		local root = game.Players.LocalPlayer.Character.HumanoidRootPart
+		local basePos = root.CFrame
+
+		root.CFrame = CFrame.new(-388, -30000, 1427)
+		VirtualInputManager:SendKeyEvent(true, "F", false, game)
+		wait(0.1)
+		VirtualInputManager:SendKeyEvent(false, "F", false, game)
+		wait(0.5)
+		root.CFrame = basePos
+	end)
+
+end
+
+
+game:GetService("RunService").RenderStepped:Wait()
+
+-- ANIMAL SIMULATOR
+
+if game.GameId == 2023680558 then
+	local page = venyx:addPage("Animal simulator", 8988803597)
+
+	local ChestPage = page:addSection("Chest")
+	local packPage = page:addSection("Pack and Name")
+	local BossPage = page:addSection("Boss (beta)")
+	local trollPage = page:addSection("Troll")
+	local OtherPage = page:addSection("Other")
+
+	ChestPage:addToggle("farm bot", nil, function(value)
+		bot = value
+		if bot then
+			loadstring(game:HttpGet("https://pastebin.com/raw/Q37wgSjN", true))()
+		else
+			game.Players.LocalPlayer.Character.Humanoid.Name = "a"
+			wait(0.2)
+			game.Players.LocalPlayer.Character.a.Name = "Humanoid"
+		end
+	end)
+
+	ChestPage:addToggle("bring chest", nil, function(value)
+		bringChest = value
+	end)
+
+	ChestPage:addToggle("tp to chest", nil, function(value)
+		toChest = value
+	end)
+
+	ChestPage:addToggle("autocollect", nil, function(value)
+		autocollect = value
+	end)
+
+	ChestPage:addToggle("autocollect egg", nil, function(value)
+		autocollectEgg = value
+	end)
+
+	ChestPage:addSlider("autocollect egg speed", 10, 0, 10, function(value)
+		autocollectEggSpeed = value
+	end)
+
+
+	ChestPage:addToggle("Hide chest reward", nil, function(value)
+		HideReward = value
+	end)
+
+
+
+
+
+	packPage:addButton("Create invisible pack", function()
+		game:GetService("Players").LocalPlayer.PlayerGui.TeamGUI.noTeamFrame.teamInfo.createBtn.createTeamEvent:FireServer(nil)
+		game:GetService("Players").LocalPlayer.PlayerGui.TeamGUI.Enabled = true
+	end)
+
+	packPage:addButton("Remove name caracter limit", function()
+		game.Players.LocalPlayer.PlayerGui.RolePlayName.Frame.NameTB.limit:Destroy()
+	end)
+
+
+
+
+	BossPage:addToggle("Killaura lava gorilla", nil, function(value)
+		_G.BossGorillaFarm = value
+	end)
+
+	BossPage:addButton("tp to Gorilla", function()
+		if game.Workspace.NPC:findFirstChild("LavaGorilla") and game.Workspace.NPC.LavaGorilla:findFirstChild("HumanoidRootPart") then
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Workspace.NPC.LavaGorilla.HumanoidRootPart.Position)
+		else
+			venyx:Notify("ERROR", "gorilla is death !")
+		end
+	end)
+
+	BossPage:addToggle("Killaura cerbus", nil, function(value)
+		_G.BossCerberFarm = value
+	end)
+
+	BossPage:addButton("tp to cerber", function()
+		if game.Workspace.NPC:findFirstChild("Trex") and game.Workspace.NPC.Trex:findFirstChild("HumanoidRootPart") then
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Workspace.NPC.Trex.HumanoidRootPart.Position)
+		else
+			venyx:Notify("ERROR", "cerber is death !")
+		end
+	end)
+
+	BossPage:addToggle("Killaura drake", nil, function(value)
+		_G.BossDrakeFarm = value
+	end)
+
+	BossPage:addButton("tp to drake", function()
+		if game.Workspace.NPC:findFirstChild("Drake") and game.Workspace.NPC.Drake:findFirstChild("HumanoidRootPart") then
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Workspace.NPC.Drake.HumanoidRootPart.Position)
+		else
+			venyx:Notify("ERROR", "drake is death !")
+		end
+	end)
+
+	BossPage:addToggle("DragonSlayer", nil, function(value)
+		_G.BossDragonSlayerFarm = value
+	end)
+
+	BossPage:addButton("tp to DragonSlayer", function()
+		if game.Workspace.NPC:findFirstChild("DragonSlayer") and game.Workspace.NPC.DragonSlayer:findFirstChild("HumanoidRootPart") then
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Workspace.NPC.DragonSlayer.HumanoidRootPart.Position)
+		else
+			venyx:Notify("ERROR", "DragonSlayer is death !")
+		end
+	end)
+
+
+
+	trollPage:addButton("Drop head (animal)", function()
+		game.Players.LocalPlayer.Character.Neck.Motor6D:Destroy()
+	end)
+
+
+	OtherPage:addToggle("Show player Username", nil, function(value)
+		if value then
+			game.Players.LocalPlayer.NameDisplayDistance = 100000
+		else
+			game.Players.LocalPlayer.NameDisplayDistance = 0
+		end
+	end)
 
 
 
@@ -7017,9 +7636,342 @@ game:GetService("RunService").RenderStepped:Wait()
 
 
 
+	-- PVP
+	local page = venyx:addPage("PVP", 10609187462)
+
+	local keyboardPage = page:addSection("Autokeyboard")
+	--local ItemPage = page:addSection("GiveItem")
+	local zombiePage = page:addSection("Zombie Kill aura")
+	local KillAuraPage = page:addSection("Kill aura")
+	local KillAuraPage1 = page:addSection("Kill aura1")
+	local KillAuraPage2 = page:addSection("Kill aura2")
+	local KillAuraPage3 = page:addSection("Kill aura3")
+	local KillAuraPage4 = page:addSection("Kill aura4")
+
+	keyboardPage:addToggle("auto hit", nil, function(value)
+		autoHit = value
+	end)
+
+	keyboardPage:addToggle("auto eat (unstable)", nil, function(value)
+		autoEat = value
+	end)
 
 
 
+	--ItemPage:addButton("Give fireball", function()
+	--	local FireFounded = false
+	--	for i, v in pairs(game.Players:GetDescendants()) do
+	--		if v.Name == "Fireball" and v:FindFirstChild("FireballEvent") then
+	--			v.Parent = game.Players.LocalPlayer.Backpack
+	--			FireFounded = true
+	--		end
+	--	end
+	--	if not FireFounded then
+	--		venyx:Notify("Error", "No fire found :c")
+	--	end
+	--end)
+
+
+	zombiePage:addToggle("Zombie kill aura", nil, function(value)
+		ZombieKillAura = value
+	end)
+
+
+
+
+
+	KillAuraPage:addToggle("Kill aura", nil, function(value)
+		KillAura = value
+	end)
+
+	KillAuraPage:addKeybind("Kill aura keybind", nil, function()
+		KillAura = not KillAura
+		KillAuraPage:updateToggle("Kill aura", "Kill aura", KillAura)
+	end)
+
+
+
+
+
+
+	KillAuraPage1:addTextbox("kill aura target", "player name", function(value, focusLost)
+		if focusLost then
+			killAuraTarget1 = value
+		end
+	end)
+
+	KillAuraPage1:addKeybind("Hit this player : ", Enum.KeyCode.E, function()
+		if game.Players:FindFirstChild(killAuraTarget1) then
+			game.ReplicatedStorage.jdskhfsIIIllliiIIIdchgdIiIIIlIlIli:FireServer(game.Players:FindFirstChild(killAuraTarget1).Character.Humanoid)
+		end
+	end)
+
+	KillAuraPage1:addToggle("spam hit", nil, function(value)
+		spamHit1 = value
+	end)
+
+
+
+
+
+
+	KillAuraPage2:addTextbox("kill aura target", "player name", function(value, focusLost)
+		if focusLost then
+			killAuraTarget2 = value
+		end
+	end)
+
+	KillAuraPage2:addKeybind("Hit this player : ", Enum.KeyCode.E, function()
+		if game.Players:FindFirstChild(killAuraTarget1) then
+			game.ReplicatedStorage.jdskhfsIIIllliiIIIdchgdIiIIIlIlIli:FireServer(game.Players:FindFirstChild(killAuraTarget1).Character.Humanoid)
+		end
+	end)
+
+	KillAuraPage2:addToggle("spam hit", nil, function(value)
+		spamHit2 = value
+	end)
+
+
+
+
+
+
+	KillAuraPage3:addTextbox("kill aura target", "player name", function(value, focusLost)
+		if focusLost then
+			killAuraTarget3 = value
+		end
+	end)
+
+	KillAuraPage3:addKeybind("Hit this player : ", Enum.KeyCode.E, function()
+		if game.Players:FindFirstChild(killAuraTarget1) then
+			game.ReplicatedStorage.jdskhfsIIIllliiIIIdchgdIiIIIlIlIli:FireServer(game.Players:FindFirstChild(killAuraTarget1).Character.Humanoid)
+		end
+	end)
+
+	KillAuraPage3:addToggle("spam hit", nil, function(value)
+		spamHit3 = value
+	end)
+
+
+
+
+
+
+	KillAuraPage4:addTextbox("kill aura target", "player name", function(value, focusLost)
+		if focusLost then
+			killAuraTarget4 = value
+		end
+	end)
+
+	KillAuraPage4:addKeybind("Hit this player : ", Enum.KeyCode.E, function()
+		if game.Players:FindFirstChild(killAuraTarget1) then
+			game.ReplicatedStorage.jdskhfsIIIllliiIIIdchgdIiIIIlIlIli:FireServer(game.Players:FindFirstChild(killAuraTarget1).Character.Humanoid)
+		end
+	end)
+
+	KillAuraPage4:addToggle("spam hit", nil, function(value)
+		spamHit4 = value
+	end)
+
+
+
+
+
+
+
+
+
+
+
+
+	---- Autofarm
+	--local page = venyx:addPage("Autofarm", 8988803597)
+
+	--local onlineAutofarmPage = page:addSection("Online autofarm")
+	--local afkAutofarmPage = page:addSection("afk autofarm")
+
+
+	--onlineAutofarmPage:addToggle("boss kill farm", nil, function(value)
+	--	BossKillFarm = value
+	--end)
+
+
+
+	--afkAutofarmPage:addToggle("training area farm", nil, function(value)
+	--	autofarm = value
+	--	if value then
+	--		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-562 , -409, 2531)
+	--		for i, v in pairs(game.Workspace.pleaseno:GetChildren()) do
+	--			if i == 7 then
+	--				v.Name = "farm"
+	--			end
+	--		end
+	--	else
+
+	--	end
+	--end)
+
+
+	--afkAutofarmPage:addToggle("boss kill farm fix", nil, function(value)
+	--	if value then
+	--		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(129, -70, 2443)
+	--		vu:SetKeyDown("t")
+	--		vu:SetKeyUp("t")
+	--	else
+	--		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(259.826, -12.396, 3053.77)
+	--	end
+	--	BossKillFarmFix = value
+	--end)
+
+
+	--afkAutofarmPage:addToggle("Zombie Autofarm", nil, function(value)
+	--	ZombieAutofarm = value
+	--	if value then
+
+	--	else
+	--		game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
+	--		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(259.826, -12.396, 3053.77)
+	--	end
+	--end)
+end
+
+
+game:GetService("RunService").RenderStepped:Wait()
+----------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------Pizza place-------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
+print(game.GameId)
+if game.GameId == 47545 then
+	local page = venyx:addPage("Pizza place", 8988812453)
+
+	local AutoworkPage = page:addSection("Autowork")
+
+
+	AutoworkPage:addToggle("Cashier", nil, function(value)
+		doCashier = value
+	end)
+
+	AutoworkPage:addToggle("Cook", nil, function(value)
+		doCook = value
+	end)
+
+	AutoworkPage:addToggle("Boxer", nil, function(value)
+		doBoxer = value
+	end)
+
+	AutoworkPage:addToggle("Delivrery", nil, function(value)
+		doDelivery = value
+	end)
+
+	AutoworkPage:addToggle("Supplier", nil, function(value)
+		doSupplier = value
+	end)
+
+end
+
+
+game:GetService("RunService").RenderStepped:Wait()
+----------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------BUILD A BOAT------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
+
+if game.GameId == 210851291 then
+	local page = venyx:addPage("Build a boat", 8988823793)
+
+	local AutofarmPage = page:addSection("Autofarm")
+	local MiscPage = page:addSection("Misc")
+	local Transform = page:addSection("Transform")
+	local Utility = page:addSection("Utility")
+
+
+	AutofarmPage:addToggle("fast autofarm", nil, function(value)
+		BABFastAutofarm = value
+		if value then
+			autoFarmBAB()
+		else
+
+		end
+	end)
+
+	AutofarmPage:addSlider("Autofarm speed", 4, 1, 5, function(value)
+		BABAutofarmSpeed = 6 - value
+	end)
+
+	MiscPage:addButton("Water Godmode", function()
+		LocalPlayerName = game:GetService("Players").LocalPlayer.Name
+		LocalPlayerWorkspace = game:GetService("Workspace")[LocalPlayerName]
+		LocalPlayerWorkspace.WaterDetector:Destroy()
+	end)
+
+
+
+	Transform:addButton("Fox Character", function()
+		game.Workspace.ChangeCharacter:FireServer("FoxCharacter")
+	end)
+	Transform:addButton("Chicken Character", function()
+		game.Workspace.ChangeCharacter:FireServer("ChickenCharacter")
+	end)
+	Transform:addButton("Penguin Character", function()
+		game.Workspace.ChangeCharacter:FireServer("PenguinCharacter")
+	end)
+
+
+	Utility:addToggle("Anti Portal Abuse", nil, function(value)
+		antiPortalAbuse = value
+	end)
+
+	Utility:addTextbox("slot", "slot number", function(value, focusLost)
+		if focusLost then
+			SlotNumber = value
+		end
+	end)
+
+	Utility:addButton("Load slot", function()
+		local args = {
+			[1] = SlotNumber,
+			[2] = 0
+		}
+
+		workspace.LoadBoatData:FireServer(unpack(args))
+
+	end)
+
+	Utility:addButton("Clear all", function()
+		workspace.ClearAllPlayersBoatParts:FireServer()
+	end)
+
+	Utility:addButton("Buy 50 wood", function()
+		local args = {
+			[1] = "WoodBlock",
+			[2] = 1
+		}
+
+		workspace.ItemBoughtFromShop:InvokeServer(unpack(args))
+	end)
+
+	Utility:addButton("Hide menu", function()
+		game.Players.LocalPlayer.PlayerGui.ShopGui.SideFrame.MenuButton.Visible = false
+		game.Players.LocalPlayer.PlayerGui.GoldGui.Frame.Visible = false
+		game.Players.LocalPlayer.PlayerGui.LaunchBoatGui.LaunchFrame.Visible = false
+		game.Players.LocalPlayer.PlayerGui.PlayerListGui.Frame.Visible = false
+
+		for i, Item in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+			Item:Destroy()
+		end
+	end)
+end
+
+
+
+
+
+
+
+
+
+
+
+game:GetService("RunService").RenderStepped:Wait()
 ----------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------ISLAND------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------
@@ -7949,7 +8901,7 @@ local AutoSmelterPage = page:addSection("Auto Smelter Industrial")
 
 				local item
 				local maxDistance = 25
-				local items = {"chestLargeIndustrialIO"}
+				local items = {"chestMediumIndustrial", "chestMediumIndustrialIO"}
 				for i, v in pairs(workspace.Islands:GetChildren()) do
 					for i, v in pairs(v.Blocks:GetChildren()) do
 						if table.find(items, v.Name) and v.Contents:FindFirstChildOfClass("Tool") then
@@ -8144,111 +9096,52 @@ end
 
 
 
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------TEST ZONE---------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
+--local page = venyx:addPage("Test zone", 5012544693)
+
+--local testPage = page:addSection("Test")
+
+--testPage:addTextbox("Notification", "Default", function(value, focusLost)
+--	if focusLost then
+--		venyx:Notify("Title", "text")
+--	end
+--end)
+
+----local plrs = {}
+----for i, v in pairs(game.Players:GetPlayers()) do
+----	table.insert(plrs, 1, v.Name)
+----end
+----testPage:addDropdown("Dropdown", plrs, function(text)
+----	print("Selected", text)
+----end)
+
+--BasicHack:addKeybind("test", Enum.KeyCode.E, function(value)
+--	print(value)
+--end)
+
+--testPage:addKeybind("BasePrint", nil, function(value)
+--	print(value)
+--end)
+
+
+
+--testPage:addSlider("test", testSpeedValue, 1, 1000, function(value)
+
+--end)
+
+-- Saved script
+--local setting = venyx:addPage("Games supported", 10772550465)
+--local GamesList = setting:addSection("games (click to teleport)")
+
+
 game:GetService("RunService").RenderStepped:Wait()
-
-
-
--- Start Crate
-
-	local page = venyx:addPage("Crate", 8988837477)
-	local CratePage = page:addSection("Collect & Sell  Crate")
-
-
-	local ChestAutocollect
-	CratePage:addToggle("Autocollect near chest", nil, function(value)
-		ChestAutocollect = value
-
-		while ChestAutocollect do
-			wait()
-			local success = pcall(function()
-
-				local item
-				local maxDistance = 25
-				local items = {"chestLargeIndustrialIO"}
-				for i, v in pairs(workspace.Islands:GetChildren()) do
-					for i, v in pairs(v.Blocks:GetChildren()) do
-						if table.find(items, v.Name) and v.Contents:FindFirstChildOfClass("Tool") then
-							if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Position).Magnitude < maxDistance then
-								item = v
-								maxDistance = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.Position).Magnitude
-							end
-						end
-					end
-				end
-
-				if not item then game.fkjzhfjsh:Destroy() end
-
-				if debugMode and item then
-					item.Transparency = 0
-					spawn(function()
-						wait(1)
-						item.Transparency = 1
-					end)
-
-				end
-
-				local args = {
-					[1] = {
-						["chest"] = item,
-						["player_tracking_category"] = "join_from_web",
-						["amount"] = item.Contents:FindFirstChildOfClass("Tool").Amount.Value,
-						["tool"] = item.Contents:FindFirstChildOfClass("Tool"),
-						["action"] = "withdraw"
-					}
-				}
-
-				game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_CHEST_TRANSACTION:InvokeServer(unpack(args))
-
-			end)
-
-			if not success then
-				wait(1)
-			end
-		end
-	end)
-
-
-
-
-	CratePage:addButton("Sell Melon Crate", function()
-
-					local plr = game.Players.LocalPlayer
-					local amountLMC = plr.Backpack.crateMetalMelon.Amount.Value
-
-					local args = {
-					    [1] = {
-					        ["merchant"] = "wholesaler",
-					        ["offerId"] = 170,
-					        ["amount"] = amountLMC
-					    }
-					}
-
-					game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_MERCHANT_ORDER_REQUEST:InvokeServer(unpack(args))
-								end)
-				
-
-
-
-	CratePage:addButton("Sell Pineapple Crate", function()
-
-				local plr = game.Players.LocalPlayer
-				local amountLPC = plr.Backpack.crateMetalPineapple.Amount.Value
-
-				local args = {
-				    [1] = {
-				        ["merchant"] = "wholesaler",
-				        ["offerId"] = 171,
-				        ["amount"] = amountLPC
-				    }
-				}
-
-				game:GetService("ReplicatedStorage").rbxts_include.node_modules.net.out._NetManaged.CLIENT_MERCHANT_ORDER_REQUEST:InvokeServer(unpack(args))
-							end)
-						
-	
--- End Crate
-
-
 -- THEME
 local theme = venyx:addPage("Theme", 8988837477)
 local ThemePresets = theme:addSection("Theme Presets")
